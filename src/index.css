@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Fugaz+One|Work+Sans&display=swap');
 body {
-  margin: 0;
   font-family:
     'Work Sans'
     BlinkMacSystemFont,
@@ -14,7 +13,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url("https://source.unsplash.com/collection/2253950/1600x900");
+  background-image: url("https://source.unsplash.com/collection/1266031/1600x900");
 }
 h1,h2,h3,h4,h5,h6,.new-game-button {
   font-family: 'Fugaz One', cursive;
@@ -33,6 +32,6 @@ code {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 60px; /* Set the fixed height of the footer here */
-  line-height: 60px; /* Vertically center the text there */
+  height: 50px; /* Set the fixed height of the footer here */
+  line-height: 50px; /* Vertically center the text there */
 }
