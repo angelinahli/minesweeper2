@@ -2,7 +2,11 @@ import React from 'react';
 import _ from 'lodash';
 import './App.css';
 
-const DEFAULT_NUM_MINES = 10
+const NUM_MINES_SETTINGS = {
+  easy: 10,
+  medium: 20,
+  hard: 30
+}
 const DEFAULT_HEIGHT = 10
 const DEFAULT_WIDTH = 15;
 
@@ -289,7 +293,7 @@ class App extends React.Component {
         <div className="row">
           <div className="col-lg-2 col-md-1" />
           <div className="col-lg-8 col-md-10 app-container">
-            <Minesweeper numMines={ DEFAULT_NUM_MINES }
+            <Minesweeper numMines={ NUM_MINES_SETTINGS.medium }
                          numCells={ DEFAULT_HEIGHT * DEFAULT_WIDTH }
                          height={ DEFAULT_HEIGHT }
                          width={ DEFAULT_WIDTH } />
