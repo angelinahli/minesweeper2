@@ -2,7 +2,13 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Game art credits to [Lazarus](https://opengameart.org/content/minesweeper-tile-set-lazarus)
+Game art credits to [Lazarus](https://opengameart.org/content/minesweeper-tile-set-lazarus).
+
+### To Do
+* Add 'flag mine' ability
+* Allow users to modify next game based on difficulty
+* Improve UI for mobile users
+* Add an instructions section
 
 ## Available Scripts
 
