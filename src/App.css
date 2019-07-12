@@ -1,16 +1,52 @@
 .app-container {
   margin-top: 50px;
 }
+.grid-container {
+  margin-top: 20px;
+}
 .grid-row:after {
   clear: both;
   content: "";
   display: table;
 }
 .cell {
-  border-width: 3px;
+  border-width: 2px;
   border-style: solid;
-  border-color: white;
-  background-color: #CDD3CD;
-  width: 50px;
-  height: 50px;
+  border-color: transparent;
+  background-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+.zero {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_0.png");
+}
+.one {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_1.png");
+}
+.two {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_2.png");
+}
+.three {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_3.png");
+}
+.four {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_4.png");
+}
+.five {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_5.png");
+}
+.six {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_6.png");
+}
+.seven {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_7.png");
+}
+.eight {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_8.png");
+}
+.hidden {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_unexplored.png");
+}
+.mine {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_mine.png");
 }

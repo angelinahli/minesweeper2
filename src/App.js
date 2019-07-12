@@ -3,7 +3,8 @@ import _ from 'lodash';
 import './App.css';
 
 const DEFAULT_NUM_MINES = 10
-const DEFAULT_GRID_LENGTH = 10
+const DEFAULT_HEIGHT = 10
+const DEFAULT_WIDTH = 15;
 
 class Cell {
   constructor(row, col, neighboringMines, isMine) {
@@ -39,7 +40,7 @@ class Minesweeper extends React.Component {
 
   constructor(props) {
     /**
-    props: {numMines: ..., gridLength: ...}
+    props: {numMines: ..., width: ..., height: ...}
     Initializes a game of Minesweeper.
     Requires that numMines <= int((gridLength**2) / 2). - i.e. the maximum
         number of mines allowed = half the total number of cells.
@@ -64,9 +65,9 @@ class Minesweeper extends React.Component {
 
   getNewGrid(mines) {
     const grid = [];
-    for(let i = 0; i < this.props.gridLength; i++) {
+    for(let i = 0; i < this.props.height; i++) {
       const row = [];
-      for(let j = 0; j < this.props.gridLength; j++) {
+      for(let j = 0; j < this.props.width; j++) {
         row.push( new Cell(i, j, 0, false) );
       }
       grid.push(row);
@@ -79,13 +80,11 @@ class Minesweeper extends React.Component {
   }
 
   incrementMineBorders(grid, mine) {
-    const getValidCoord = (num) => num < 0 ? 0 :
-                                   num > this.props.gridLength - 1 ? this.props.gridLength - 1 :
-                                   num;
-    const rowLower = getValidCoord(mine.row - 1);
-    const rowUpper = getValidCoord(mine.row + 1);
-    const colLower = getValidCoord(mine.col - 1);
-    const colUpper = getValidCoord(mine.col + 1);
+    const getValidCoord = (num, maxIndex) => Math.min(Math.max(num, 0), maxIndex);
+    const rowLower = getValidCoord(mine.row - 1, this.props.height - 1);
+    const rowUpper = getValidCoord(mine.row + 1, this.props.height - 1);
+    const colLower = getValidCoord(mine.col - 1, this.props.width - 1);
+    const colUpper = getValidCoord(mine.col + 1, this.props.width - 1);
     for(let row = rowLower; row <= rowUpper; row++) {
       for(let col = colLower; col <= colUpper; col++) {
         if(!grid[row][col].isMine) {
@@ -99,21 +98,19 @@ class Minesweeper extends React.Component {
     const mines = [];
     const mineAlreadyExists = (mine) => mines.some((m) => m.equals(mine));
     for(let i = 0; i < this.props.numMines; i++) {
-      let newMine = this.getRandomMine(this.props.gridLength - 1);
+      let newMine = this.getRandomMine(this.props.height - 1, this.props.width - 1);
       while( mineAlreadyExists(newMine) ) {
-        newMine = this.getRandomMine(this.props.gridLength - 1);
+        newMine = this.getRandomMine(this.props.height - 1, this.props.width - 1);
       }
       mines.push(newMine);
     }
     return mines;
   }
 
-
-
-  getRandomMine(maxIndex) {
-    const row = _.random(maxIndex);
-    const col = _.random(maxIndex);
-    return new Cell(row, col, 0, true);
+  getRandomMine(maxRowIndex, maxColIndex) {
+    const row = _.random(maxRowIndex);
+    const col = _.random(maxColIndex);
+    return new Cell(row, col, "X", true);
   }
 
   // change handlers
@@ -126,8 +123,8 @@ class Minesweeper extends React.Component {
 
   updateVisibility(row, col) {
     // ignore if error
-    const moveIsInvalid = !this.isValidCoordinate(row) || !this.isValidCoordinate(col) || 
-                          this.state.grid[row][col].isVisible;
+    const moveIsInvalid = !this.isValidCoordinate(row, col)
+                          || this.state.grid[row][col].isVisible;
     if(moveIsInvalid) { return; }
 
     const gridCopy = this.state.grid.slice();
@@ -143,8 +140,8 @@ class Minesweeper extends React.Component {
     }
   }
 
-  isValidCoordinate(num) {
-    return 0 <= num && num < this.props.gridLength;
+  isValidCoordinate(row, col) {
+    return 0 <= row && row < this.props.height && 0 <= col && col < this.props.width;
   }
 
   updateGameStatus() {
@@ -168,25 +165,34 @@ class Minesweeper extends React.Component {
 
   turnAllCellsVisible() {
     const gridCopy = this.state.grid.slice();
-    for(let row = 0; row < this.props.gridLength; row++) {
-      gridCopy[row].map((col) => gridCopy[row][col].isVisible = true);
+    for(let row = 0; row < this.props.height; row++) {
+      gridCopy[row].map(val => val.isVisible = true);
     }
     this.setState({ grid: gridCopy });
   }
 
+  // handleNewGameClick() {
+    
+  // }
+
   render() {
     return (
-      <div className="minesweeper-container text-center">
+      <div className="container text-center minesweeper-container">
+        <h1>Minesweeper</h1>
         { this.renderGrid() }
       </div>
     )
   }
 
+  renderControlPanel() {
+
+  }
+
   renderGrid() {
     const gridElements = [];
-    for(let row = 0; row < this.props.gridLength; row++) {
+    for(let row = 0; row < this.props.height; row++) {
       const rowElements = [];
-      for(let col = 0; col < this.props.gridLength; col++) {
+      for(let col = 0; col < this.props.width; col++) {
         rowElements.push(this.renderCell(row, col));
       }
       const renderedRow = (
@@ -205,11 +211,42 @@ class Minesweeper extends React.Component {
 
   renderCell(row, col) {
     const cellData = this.state.grid[row][col];
-    const cellValue = cellData.isVisible ? cellData.neighboringMines : " ";
-    return <button key={ "cell" + row + "_" + col } 
+    const cName = "cell " + this.getCellImageName(cellData);
+    const isDisabled = cellData.isVisible || this.state.gameOver;
+    
+    if(isDisabled) {
+      return <button key={ "cell" + row + "_" + col } 
+                     disabled
+                     className={ cName }></button>;
+    } else {
+      return <button key={ "cell" + row + "_" + col } 
                    onClick={ () => this.handleCellClick(row, col) }
-                   className="cell">{ cellValue }</button>;
+                   className={ cName }></button>;
+    }
   }
+    
+
+  getCellImageName(cellData) {
+    if(!cellData.isVisible) {
+      return "hidden";
+    } else if(cellData.isMine) {
+      return "mine";
+    } else {
+      switch(cellData.neighboringMines) {
+        case 0: return "zero";
+        case 1: return "one";
+        case 2: return "two";
+        case 3: return "three";
+        case 4: return "four";
+        case 5: return "five";
+        case 6: return "six";
+        case 7: return "seven";
+        case 8: return "eight";
+      }
+    }
+    throw "This should never happen!";
+  }
+
 }
 
 class App extends React.Component {
@@ -218,7 +255,8 @@ class App extends React.Component {
       <div className="container app-container text-center">
         <Minesweeper numMines={ DEFAULT_NUM_MINES }
                      numCells={ Math.pow(DEFAULT_NUM_MINES, 2) }
-                     gridLength={ DEFAULT_GRID_LENGTH } />
+                     height={ DEFAULT_HEIGHT }
+                     width={ DEFAULT_WIDTH } />
       </div>
     )
   }

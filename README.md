@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+Game art credits to [Lazarus](https://opengameart.org/content/minesweeper-tile-set-lazarus)
+
 ## Available Scripts
 
 In the project directory, you can run:
