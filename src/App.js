@@ -115,10 +115,13 @@ class Minesweeper extends React.Component {
 
   // change handlers
 
+  handleNewGameClick() {
+    this.setState(this.getInitState());
+  }
+
   handleCellClick(row, col) {
     if(this.state.gameOver) { return; }
     this.updateVisibility(row, col);
-    this.updateGameStatus();
   }
 
   updateVisibility(row, col) {
@@ -129,7 +132,10 @@ class Minesweeper extends React.Component {
 
     const gridCopy = this.state.grid.slice();
     gridCopy[row][col].isVisible = true;
-    this.setState({ grid: gridCopy, numVisible: this.state.numVisible + 1 });
+    this.setState(
+      (prevState, props) => ({ grid: gridCopy, numVisible: prevState.numVisible + 1 }),
+      this.checkGameOver
+    );
 
     // recurse on neighbors
     if(this.state.grid[row][col].neighboringMines === 0) {
@@ -144,7 +150,7 @@ class Minesweeper extends React.Component {
     return 0 <= row && row < this.props.height && 0 <= col && col < this.props.width;
   }
 
-  updateGameStatus() {
+  checkGameOver() {
     const hasLost = this.state.mines.some((mine) => mine.isVisible);
     const hasWon = (this.props.numCells - this.props.numMines) === this.state.numVisible;
     if(hasLost) {
@@ -168,24 +174,53 @@ class Minesweeper extends React.Component {
     for(let row = 0; row < this.props.height; row++) {
       gridCopy[row].map(val => val.isVisible = true);
     }
-    this.setState({ grid: gridCopy });
+    this.setState({ grid: gridCopy, numVisible: this.props.numCells });
   }
-
-  // handleNewGameClick() {
-    
-  // }
 
   render() {
     return (
-      <div className="container text-center minesweeper-container">
-        <h1>Minesweeper</h1>
-        { this.renderGrid() }
+      <div className="card minesweeper-card text-center">
+        <div className="card-body">
+          <h1 className="card-title">Minesweeper</h1>
+          { this.renderGrid() }
+        </div>
+        <div className="card-footer">
+          { this.renderControlPanel() }
+        </div>
       </div>
     )
   }
 
   renderControlPanel() {
+    let contents;
+    if(!this.state.gameOver) {
+      contents = this.renderResetButton("New Game");
+    } else {
+      let gameStatusText = this.state.won
+        ? <h2 className="text-won">You Won!</h2>
+        : <h2 className="text-lost">You Lost...</h2>;
+      
+      contents = (
+        <div className="container">
+          <h4>{ gameStatusText }</h4>
+          { this.renderResetButton("Play Again") }
+        </div>
+      );
+    }
+    return (
+      <div className="container control-container">
+      { contents }
+      </div>
+    )
+  }
 
+  renderResetButton(text) {
+    return (
+      <button className="btn btn-success new-game-button" 
+              onClick={() => this.handleNewGameClick()}>
+        { text }
+      </button>
+    );
   }
 
   renderGrid() {
@@ -224,13 +259,12 @@ class Minesweeper extends React.Component {
                    className={ cName }></button>;
     }
   }
-    
 
   getCellImageName(cellData) {
     if(!cellData.isVisible) {
       return "hidden";
     } else if(cellData.isMine) {
-      return "mine";
+      return this.state.won ? "mine-unhit" : "mine-hit";
     } else {
       switch(cellData.neighboringMines) {
         case 0: return "zero";
@@ -246,17 +280,22 @@ class Minesweeper extends React.Component {
     }
     throw "This should never happen!";
   }
-
 }
 
 class App extends React.Component {
   render() {
     return (
-      <div className="container app-container text-center">
-        <Minesweeper numMines={ DEFAULT_NUM_MINES }
-                     numCells={ Math.pow(DEFAULT_NUM_MINES, 2) }
-                     height={ DEFAULT_HEIGHT }
-                     width={ DEFAULT_WIDTH } />
+      <div className="container text-center">
+        <div className="row">
+          <div className="col-lg-2 col-md-1" />
+          <div className="col-lg-8 col-md-10 app-container">
+            <Minesweeper numMines={ DEFAULT_NUM_MINES }
+                         numCells={ DEFAULT_HEIGHT * DEFAULT_WIDTH }
+                         height={ DEFAULT_HEIGHT }
+                         width={ DEFAULT_WIDTH } />
+          <div className="col-lg-2 col-md-1" />
+          </div>
+        </div>
       </div>
     )
   }

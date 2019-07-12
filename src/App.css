@@ -1,21 +1,32 @@
 .app-container {
   margin-top: 50px;
 }
+.minesweeper-card {
+  background: rgb(255, 255, 255, 0.75) !important;
+  border-width: 0px !important;
+}
 .grid-container {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .grid-row:after {
   clear: both;
   content: "";
   display: table;
 }
+.text-won {
+  color: #2B64A9;
+}
+.text-lost {
+  color: #841A0E;
+}
+
 .cell {
   border-width: 2px;
   border-style: solid;
   border-color: transparent;
-  background-size: 40px;
-  width: 40px;
-  height: 40px;
+  background-size: 35px;
+  width: 35px;
+  height: 35px;
 }
 .zero {
   background-image: url("./assets/Minesweeper_LAZARUS_61x61_0.png");
@@ -47,6 +58,9 @@
 .hidden {
   background-image: url("./assets/Minesweeper_LAZARUS_61x61_unexplored.png");
 }
-.mine {
+.mine-unhit {
   background-image: url("./assets/Minesweeper_LAZARUS_61x61_mine.png");
+}
+.mine-hit {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_mine_hit.png");
 }
