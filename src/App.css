@@ -14,10 +14,10 @@
   display: table;
 }
 .text-won {
-  color: #2B64A9;
+  color: #68215B;
 }
 .text-lost {
-  color: #841A0E;
+  color: #9E2F02;
 }
 
 .cell {
@@ -57,6 +57,9 @@
 }
 .hidden {
   background-image: url("./assets/Minesweeper_LAZARUS_61x61_unexplored.png");
+}
+.flagged {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_flag.png");
 }
 .mine-unhit {
   background-image: url("./assets/Minesweeper_LAZARUS_61x61_mine.png");

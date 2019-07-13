@@ -10,13 +10,26 @@ const NUM_MINES_SETTINGS = {
 const DEFAULT_HEIGHT = 10
 const DEFAULT_WIDTH = 15;
 
+const GAME_MODE = {
+  FLAG: "flag",
+  SWEEP: "sweep",
+  WON: "won",
+  LOST: "lost"
+}
+
+const CELL_MODE = {
+  FLAGGED: "flagged",
+  VISIBLE: "visible",
+  HIDDEN: "hidden"
+}
+
 class Cell {
-  constructor(row, col, neighboringMines, isMine) {
+  constructor(row, col, isMine) {
     this.row = row;
     this.col = col;
-    this.neighboringMines = neighboringMines;
     this.isMine = isMine;
-    this.isVisible = false;
+    this.neighboringMines = 0;
+    this.mode = CELL_MODE.HIDDEN;
   }
 
   equals(cell) {
@@ -50,20 +63,19 @@ class Minesweeper extends React.Component {
         number of mines allowed = half the total number of cells.
     **/
     super(props);
-    this.state = this.getInitState();
+    this.state = this.getNewGame(this.props.numMines);
   }
 
   // initialize game
 
-  getInitState() {
-    const mines = this.getRandomMines();
+  getNewGame(numMines) {
+    const mines = this.getRandomMines(numMines);
     const grid = this.getNewGrid(mines);
     return {
       mines: mines,
       grid: grid,
       numVisible: 0,
-      gameOver: false,
-      won: false
+      mode: GAME_MODE.SWEEP
     }
   }
 
@@ -72,7 +84,7 @@ class Minesweeper extends React.Component {
     for(let i = 0; i < this.props.height; i++) {
       const row = [];
       for(let j = 0; j < this.props.width; j++) {
-        row.push( new Cell(i, j, 0, false) );
+        row.push( new Cell(i, j, false) );
       }
       grid.push(row);
     }
@@ -84,24 +96,28 @@ class Minesweeper extends React.Component {
   }
 
   incrementMineBorders(grid, mine) {
-    const getValidCoord = (num, maxIndex) => Math.min(Math.max(num, 0), maxIndex);
-    const rowLower = getValidCoord(mine.row - 1, this.props.height - 1);
-    const rowUpper = getValidCoord(mine.row + 1, this.props.height - 1);
-    const colLower = getValidCoord(mine.col - 1, this.props.width - 1);
-    const colUpper = getValidCoord(mine.col + 1, this.props.width - 1);
+    const rowLower = this.getValidCoordinate(mine.row - 1, this.props.height - 1);
+    const rowUpper = this.getValidCoordinate(mine.row + 1, this.props.height - 1);
+    const colLower = this.getValidCoordinate(mine.col - 1, this.props.width - 1);
+    const colUpper = this.getValidCoordinate(mine.col + 1, this.props.width - 1);
+    
     for(let row = rowLower; row <= rowUpper; row++) {
       for(let col = colLower; col <= colUpper; col++) {
-        if(!grid[row][col].isMine) {
+        if(!(row === mine.row && col === mine.col)) {
           grid[row][col].neighboringMines += 1;
         }
       }
     }
   }
 
-  getRandomMines() {
+  getValidCoordinate(num, maxIndex) {
+    return Math.min(Math.max(num, 0), maxIndex);
+  }
+
+  getRandomMines(numMines) {
     const mines = [];
-    const mineAlreadyExists = (mine) => mines.some((m) => m.equals(mine));
-    for(let i = 0; i < this.props.numMines; i++) {
+    const mineAlreadyExists = (newMine) => mines.some((m) => m.equals(newMine));
+    for(let i = 0; i < numMines; i++) {
       let newMine = this.getRandomMine(this.props.height - 1, this.props.width - 1);
       while( mineAlreadyExists(newMine) ) {
         newMine = this.getRandomMine(this.props.height - 1, this.props.width - 1);
@@ -114,28 +130,54 @@ class Minesweeper extends React.Component {
   getRandomMine(maxRowIndex, maxColIndex) {
     const row = _.random(maxRowIndex);
     const col = _.random(maxColIndex);
-    return new Cell(row, col, "X", true);
+    return new Cell(row, col, true);
   }
 
   // change handlers
 
   handleNewGameClick() {
-    this.setState(this.getInitState());
+    this.setState(this.getNewGame(this.props.numMines));
+  }
+
+  handleToggleMode() {
+    const newMode = this.toggleValue(this.state.mode, GAME_MODE.FLAG, GAME_MODE.SWEEP);
+    this.setState({ mode: newMode });
+  }
+
+  toggleValue(val, val1, val2) {
+    // if val === val1 returns val2 and vice versa
+    return val === val1 ? val2 : val1;
   }
 
   handleCellClick(row, col) {
-    if(this.state.gameOver) { return; }
-    this.updateVisibility(row, col);
+    switch(this.state.mode) {
+      case GAME_MODE.SWEEP: {
+        this.updateVisibility(row, col);
+        break;
+      }
+      case GAME_MODE.FLAG: {
+        this.flagCell(row, col);
+        break;
+      }
+    }
+  }
+
+  flagCell(row, col) {
+    // assume that the row, col is hidden currently; only hidden cells can be clicked
+    const gridCopy = this.state.grid.slice();
+    const newMode = this.toggleValue(gridCopy[row][col].mode, CELL_MODE.FLAGGED, CELL_MODE.HIDDEN);
+    gridCopy[row][col].mode = newMode;
+    this.setState({ grid: gridCopy });
   }
 
   updateVisibility(row, col) {
     // ignore if error
-    const moveIsInvalid = !this.isValidCoordinate(row, col)
-                          || this.state.grid[row][col].isVisible;
-    if(moveIsInvalid) { return; }
+    const moveIsValid = this.isValidCoordinate(row, col) 
+                        && this.state.grid[row][col].mode === CELL_MODE.HIDDEN;
+    if(!moveIsValid) { return; }
 
     const gridCopy = this.state.grid.slice();
-    gridCopy[row][col].isVisible = true;
+    gridCopy[row][col].mode = CELL_MODE.VISIBLE;
     this.setState(
       (prevState, props) => ({ grid: gridCopy, numVisible: prevState.numVisible + 1 }),
       this.checkGameOver
@@ -155,20 +197,14 @@ class Minesweeper extends React.Component {
   }
 
   checkGameOver() {
-    const hasLost = this.state.mines.some((mine) => mine.isVisible);
+    const hasLost = this.state.mines.some((mine) => mine.mode === CELL_MODE.VISIBLE);
     const hasWon = (this.props.numCells - this.props.numMines) === this.state.numVisible;
     if(hasLost) {
-      this.setState({ 
-        gameOver: true, 
-        won: false
-      });
+      this.setState({ mode: GAME_MODE.LOST });
       this.turnAllCellsVisible();
     } 
     else if(hasWon) {
-      this.setState({
-        gameOver: true,
-        won: true
-      });
+      this.setState({ mode: GAME_MODE.WON });
       this.turnAllCellsVisible();
     }
   }
@@ -176,7 +212,7 @@ class Minesweeper extends React.Component {
   turnAllCellsVisible() {
     const gridCopy = this.state.grid.slice();
     for(let row = 0; row < this.props.height; row++) {
-      gridCopy[row].map(val => val.isVisible = true);
+      gridCopy[row].map(val => val.mode = CELL_MODE.VISIBLE);
     }
     this.setState({ grid: gridCopy, numVisible: this.props.numCells });
   }
@@ -197,20 +233,51 @@ class Minesweeper extends React.Component {
 
   renderControlPanel() {
     let contents;
-    if(!this.state.gameOver) {
-      contents = this.renderResetButton("New Game");
-    } else {
-      let gameStatusText = this.state.won
-        ? <h2 className="text-won">You Won!</h2>
-        : <h2 className="text-lost">You Lost...</h2>;
-      
-      contents = (
-        <div className="container">
-          <h4>{ gameStatusText }</h4>
-          { this.renderResetButton("Play Again") }
-        </div>
-      );
+    switch(this.state.mode) {
+      case GAME_MODE.SWEEP: {
+        contents = (
+          <div className="container">
+            <h4 className="text-success">Sweep Mode</h4>
+            <div className="btn-group" role="group" aria-label="Control Panel">
+              { this.renderResetButton("New Game") }
+              { this.renderToggleButton("Toggle Flag Mode") }
+            </div>
+          </div>
+        );
+        break;
+      }
+      case GAME_MODE.FLAG: {
+        contents = (
+          <div className="container">
+            <h4 className="text-info">Flag Mode</h4>
+            <div className="btn-group" role="group" aria-label="Control Panel">
+              { this.renderResetButton("New Game") }
+              { this.renderToggleButton("Toggle Sweep Mode") }
+            </div>
+          </div>
+        );
+        break;
+      }
+      case GAME_MODE.WON: {
+        contents = (
+          <div className="container">
+            <h4 className="text-won">You Won!</h4>
+            { this.renderResetButton("Play Again") }
+          </div>
+        );
+        break;
+      }
+      case GAME_MODE.LOST: {
+        contents = (
+          <div className="container">
+            <h4 className="text-lost">You Lost...</h4>
+            { this.renderResetButton("Play Again") }
+          </div>
+        );
+        break;
+      }
     }
+
     return (
       <div className="container control-container">
       { contents }
@@ -222,6 +289,15 @@ class Minesweeper extends React.Component {
     return (
       <button className="btn btn-success new-game-button" 
               onClick={() => this.handleNewGameClick()}>
+        { text }
+      </button>
+    );
+  }
+
+  renderToggleButton(text) {
+    return (
+      <button className="btn btn-info toggle-button"
+              onClick={() => this.handleToggleMode()}>
         { text }
       </button>
     );
@@ -251,9 +327,9 @@ class Minesweeper extends React.Component {
   renderCell(row, col) {
     const cellData = this.state.grid[row][col];
     const cName = "cell " + this.getCellImageName(cellData);
-    const isDisabled = cellData.isVisible || this.state.gameOver;
+    const cellEnabled = this.cellIsEnabled(cellData);
     
-    if(isDisabled) {
+    if(!cellEnabled) {
       return <button key={ "cell" + row + "_" + col } 
                      disabled
                      className={ cName }></button>;
@@ -264,11 +340,24 @@ class Minesweeper extends React.Component {
     }
   }
 
+  cellIsEnabled(cellData) {
+    if(this.state.mode === GAME_MODE.SWEEP) {
+      return cellData.mode === CELL_MODE.HIDDEN;
+    } else if(this.state.mode === GAME_MODE.FLAG) {
+      return [CELL_MODE.HIDDEN, CELL_MODE.FLAGGED].includes(cellData.mode);
+    }
+    return false;
+  }
+
   getCellImageName(cellData) {
-    if(!cellData.isVisible) {
+    if(cellData.mode === CELL_MODE.HIDDEN) {
       return "hidden";
-    } else if(cellData.isMine) {
-      return this.state.won ? "mine-unhit" : "mine-hit";
+    } else if(cellData.mode === CELL_MODE.FLAGGED) {
+      return "flagged";
+    } else if(cellData.isMine && this.state.mode === GAME_MODE.WON) {
+      return "mine-unhit";
+    } else if(cellData.isMine && this.state.mode === GAME_MODE.LOST) {
+      return "mine-hit";
     } else {
       switch(cellData.neighboringMines) {
         case 0: return "zero";
@@ -282,6 +371,8 @@ class Minesweeper extends React.Component {
         case 8: return "eight";
       }
     }
+    console.log(cellData);
+    console.log(this.state);
     throw "This should never happen!";
   }
 }

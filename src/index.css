@@ -15,7 +15,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-image: url("https://source.unsplash.com/collection/1266031/1600x900");
 }
-h1,h2,h3,h4,h5,h6,.new-game-button {
+h1,h2,h3,h4,h5,h6,.new-game-button,.toggle-button {
   font-family: 'Fugaz One', cursive;
   text-transform: lowercase;
 }
