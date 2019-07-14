@@ -6,7 +6,6 @@ Game art credits to [Lazarus](https://opengameart.org/content/minesweeper-tile-s
 
 ### To Do
 * Allow users to modify next game based on difficulty
-* Improve UI for mobile users
 * Add an instructions section
 
 ## Available Scripts
