@@ -16,11 +16,7 @@
 .text-lost {
   color: #9E2F02;
 }
-
 .cell {
-  border-width: 2px;
-  border-style: solid;
-  border-color: transparent;
   padding-top: 87%;
   background-size: 100% 100%;
   background-repeat: no-repeat;
