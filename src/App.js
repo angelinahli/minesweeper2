@@ -219,16 +219,54 @@ class Minesweeper extends React.Component {
 
   render() {
     return (
-      <div className="card minesweeper-card text-center">
-        <div className="card-body">
-          <h1 className="card-title">Minesweeper</h1>
+      <div className="row app-container text-center rounded">
+        
+        <div className="col-md-8 game-container">
+          <br />
+          <h1>Minesweeper</h1>
           { this.renderGrid() }
-        </div>
-        <div className="card-footer">
+          <hr />
           { this.renderControlPanel() }
         </div>
+
+        <div className="col-md-4 rules-container">
+          { this.renderInstructions() }
+        </div>
+
       </div>
     )
+  }
+
+  renderInstructions() {
+    return (
+      <div className="container">
+        <br />
+        <h4>Rules</h4>
+        <p>
+          In minesweeper, you are presented with a grid of potential mines. 
+          There are <b>{ this.props.numMines }</b> mines in total; it's your job to
+          figure out where those mines are. When you click on a square, if that
+          square contains a mine you automatically lose. Otherwise, the square
+          will reveal the number of neighboring squares that contain mines. You
+          win the game by clearing the board of all squares that aren't mines.
+          Good luck!
+        </p>
+
+        <h4>Further Info</h4>
+        <p>
+          A square's neighbors are the squares above, below, left, right and 
+          diagonal from that square. Squares have up to 8 neighbors.
+        </p>
+        <p>
+          You can track your guesses about which squares contain mines in
+          flag mode. In flag mode, if you click on a hidden square, the square
+          will be flagged as a mine. If the square has been flagged, clicking it
+          in flag mode will unflag the square. Flagged squares can't be clicked
+          on in sweep mode, so don't worry about accidentally detonating a known
+          mine.
+        </p>
+      </div>
+    );
   }
 
   renderControlPanel() {
@@ -373,16 +411,11 @@ class Minesweeper extends React.Component {
 class App extends React.Component {
   render() {
     return (
-      <div className="container text-center">
-        <div className="row">
-          <div className="col-lg-2 col-md-1" />
-          <div className="col-lg-8 col-md-10 app-container">
-            <Minesweeper numMines={ NUM_MINES_SETTINGS.medium }
-                         numCells={ HEIGHT * WIDTH }
-                         height={ HEIGHT }
-                         width={ WIDTH } />
-          </div>
-        </div>
+      <div className="container">
+        <Minesweeper numMines={ NUM_MINES_SETTINGS.medium }
+                     numCells={ HEIGHT * WIDTH }
+                     height={ HEIGHT }
+                     width={ WIDTH } />
       </div>
     )
   }

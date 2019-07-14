@@ -25,8 +25,6 @@ code {
     monospace;
 }
 
-/* from: https://getbootstrap.com/docs/4.1/examples/sticky-footer/
-  sticky-footer.css */
 .footer {
   background: rgba(255, 255, 255, 0.75);
   position: fixed;

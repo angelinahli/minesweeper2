@@ -1,14 +1,16 @@
 .app-container {
   margin-top: 50px;
 }
-.minesweeper-card {
-  background: rgb(255, 255, 255, 0.8) !important;
-  border-width: 0px !important;
-}
 .grid-container {
   margin-top: 10px;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
+}
+.game-container {
+  background: rgb(255, 255, 255, 0.8) !important;
+}
+.rules-container {
+  background: rgb(230, 230, 230, 0.8) !important;
 }
 .text-won {
   color: #68215B;
