@@ -7,8 +7,8 @@ const NUM_MINES_SETTINGS = {
   medium: 20,
   hard: 30
 }
-const DEFAULT_HEIGHT = 10
-const DEFAULT_WIDTH = 15;
+const HEIGHT = 10
+const WIDTH = 15;
 
 const GAME_MODE = {
   FLAG: "flag",
@@ -306,20 +306,15 @@ class Minesweeper extends React.Component {
   renderGrid() {
     const gridElements = [];
     for(let row = 0; row < this.props.height; row++) {
-      const rowElements = [];
       for(let col = 0; col < this.props.width; col++) {
-        rowElements.push(this.renderCell(row, col));
+        gridElements.push(this.renderCell(row, col));
       }
-      const renderedRow = (
-        <div className="grid-row" key={ "row" + row }>
-          { rowElements }
-        </div>
-      );
-      gridElements.push(renderedRow);
     }
     return (
-      <div className="grid-container">
-        { gridElements }
+      <div className="container">
+        <div className="grid-container">
+          { gridElements }
+        </div>
       </div>
     );
   }
@@ -371,8 +366,6 @@ class Minesweeper extends React.Component {
         case 8: return "eight";
       }
     }
-    console.log(cellData);
-    console.log(this.state);
     throw "This should never happen!";
   }
 }
@@ -385,10 +378,9 @@ class App extends React.Component {
           <div className="col-lg-2 col-md-1" />
           <div className="col-lg-8 col-md-10 app-container">
             <Minesweeper numMines={ NUM_MINES_SETTINGS.medium }
-                         numCells={ DEFAULT_HEIGHT * DEFAULT_WIDTH }
-                         height={ DEFAULT_HEIGHT }
-                         width={ DEFAULT_WIDTH } />
-          <div className="col-lg-2 col-md-1" />
+                         numCells={ HEIGHT * WIDTH }
+                         height={ HEIGHT }
+                         width={ WIDTH } />
           </div>
         </div>
       </div>

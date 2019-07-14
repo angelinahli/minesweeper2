@@ -29,9 +29,8 @@ code {
   sticky-footer.css */
 .footer {
   background: rgba(255, 255, 255, 0.75);
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
-  height: 50px; /* Set the fixed height of the footer here */
-  line-height: 50px; /* Vertically center the text there */
+  padding-top: 15px;
 }
