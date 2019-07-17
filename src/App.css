@@ -4,7 +4,7 @@
 .grid-container {
   margin-top: 10px;
   display: grid;
-  grid-template-columns: repeat(15, 1fr);
+  grid-template-columns: repeat(25, 1fr);
 }
 .game-container {
   background: rgb(255, 255, 255, 0.8) !important;

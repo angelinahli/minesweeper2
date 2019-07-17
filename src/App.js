@@ -3,12 +3,12 @@ import _ from 'lodash';
 import './App.css';
 
 const NUM_MINES_SETTINGS = {
-  easy: 10,
-  medium: 20,
-  hard: 30
+  easy: 20,
+  medium: 40,
+  hard: 60
 }
-const HEIGHT = 10
-const WIDTH = 15;
+const HEIGHT = 15;
+const WIDTH = 25;
 
 const GAME_MODE = {
   FLAG: "flag",
