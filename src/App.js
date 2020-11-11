@@ -63,6 +63,9 @@ class Minesweeper extends React.Component {
     **/
     super(props);
     this.state = this.getNewGame(this.props.numMines);
+    this.setState({
+      showRules: false
+    });
   }
 
   // initialize game
@@ -75,7 +78,6 @@ class Minesweeper extends React.Component {
       grid: grid,
       numVisible: 0,
       mode: GAME_MODE.SWEEP,
-      showRules: true
     }
   }
 
