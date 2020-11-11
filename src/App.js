@@ -75,7 +75,8 @@ class Minesweeper extends React.Component {
       mines: mines,
       grid: grid,
       numVisible: 0,
-      mode: GAME_MODE.SWEEP
+      mode: GAME_MODE.SWEEP,
+      showRules: true
     }
   }
 
@@ -142,6 +143,11 @@ class Minesweeper extends React.Component {
   handleToggleMode() {
     const newMode = this.toggleValue(this.state.mode, GAME_MODE.FLAG, GAME_MODE.SWEEP);
     this.setState({ mode: newMode });
+  }
+
+  handleToggleRules() {
+    const newRulesValue = this.toggleValue(this.state.showRules, true, false);
+    this.setState({ showRules: newRulesValue });
   }
 
   toggleValue(val, val1, val2) {
@@ -221,6 +227,7 @@ class Minesweeper extends React.Component {
     return (
       <div className="row text-center rounded">
         
+        <div className="col-md-2" hidden={this.state.showRules}></div>
         <div className="col-md-8 game-container">
           <br />
           <h1>Minesweeper</h1>
@@ -230,10 +237,9 @@ class Minesweeper extends React.Component {
           <br />
         </div>
 
-        <div className="col-md-4 rules-container">
+        <div className="col-md-4 rules-container" hidden={!this.state.showRules}>
           <br />
           { this.renderInstructions() }
-          <br />
         </div>
 
       </div>
@@ -255,15 +261,14 @@ class Minesweeper extends React.Component {
         <h4>Further Info</h4>
         <p>
           A square's neighbors are the squares above, below, left, right and 
-          diagonal from that square. Squares have up to 8 neighbors.
+          diagonal from that square.
         </p>
         <p>
           You can track your guesses about which squares contain mines in
           flag mode. In flag mode, if you click on a hidden square, the square
-          will be flagged as a mine. If the square has been flagged, clicking it
-          in flag mode will unflag the square. Flagged squares can't be clicked
-          on in sweep mode, so don't worry about accidentally detonating a known
-          mine.
+          will be flagged as a mine. Clicking a flagged square in flag mode will 
+          unflag the square. Flagged squares can't be clicked on in sweep mode, 
+          so don't worry about accidentally detonating a known mine.
         </p>
       </div>
     );
@@ -279,6 +284,7 @@ class Minesweeper extends React.Component {
             <div className="btn-group" role="group" aria-label="Control Panel">
               { this.renderResetButton("New Game") }
               { this.renderToggleButton("Toggle Flag Mode") }
+              { this.renderRulesButton() }
             </div>
           </div>
         );
@@ -291,6 +297,7 @@ class Minesweeper extends React.Component {
             <div className="btn-group" role="group" aria-label="Control Panel">
               { this.renderResetButton("New Game") }
               { this.renderToggleButton("Toggle Sweep Mode") }
+              { this.renderRulesButton() }
             </div>
           </div>
         );
@@ -301,6 +308,7 @@ class Minesweeper extends React.Component {
           <div className="container">
             <h4 className="text-won">You Won!</h4>
             { this.renderResetButton("Play Again") }
+              { this.renderRulesButton() }
           </div>
         );
         break;
@@ -310,6 +318,7 @@ class Minesweeper extends React.Component {
           <div className="container">
             <h4 className="text-lost">You Lost...</h4>
             { this.renderResetButton("Play Again") }
+              { this.renderRulesButton() }
           </div>
         );
         break;
@@ -325,7 +334,7 @@ class Minesweeper extends React.Component {
 
   renderResetButton(text) {
     return (
-      <button className="btn btn-success new-game-button" 
+      <button className="btn btn-success" 
               onClick={() => this.handleNewGameClick()}>
         { text }
       </button>
@@ -334,9 +343,18 @@ class Minesweeper extends React.Component {
 
   renderToggleButton(text) {
     return (
-      <button className="btn btn-info toggle-button"
+      <button className="btn btn-info"
               onClick={() => this.handleToggleMode()}>
         { text }
+      </button>
+    );
+  }
+
+  renderRulesButton() {
+    return (
+      <button className="btn btn-secondary"
+              onClick={() => this.handleToggleRules()}>
+      { this.state.showRules ? "Hide Rules" : "Show Rules" }
       </button>
     );
   }

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Fugaz+One|Work+Sans&display=swap');
 body {
   font-family:
     'Work Sans'
@@ -15,7 +14,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-image: url("https://source.unsplash.com/collection/1266031/1600x900");
 }
-h1,h2,h3,h4,h5,h6,.new-game-button,.toggle-button {
+h1,h2,h3,h4,h5,h6,.btn {
   font-family: 'Fugaz One', cursive;
   text-transform: lowercase;
 }
@@ -31,4 +30,71 @@ code {
   bottom: 0;
   width: 100%;
   padding-top: 15px;
+}
+
+/* game specific */
+
+.app-container {
+  margin-top: 40px;
+}
+.grid-container {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+}
+.game-container {
+  background: rgb(255, 255, 255, 0.8) !important;
+}
+.rules-container {
+  background: rgb(230, 230, 230, 0.8) !important;
+}
+.text-won {
+  color: #68215B;
+}
+.text-lost {
+  color: #9E2F02;
+}
+.cell {
+  padding-top: 87%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.zero {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_0.png");
+}
+.one {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_1.png");
+}
+.two {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_2.png");
+}
+.three {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_3.png");
+}
+.four {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_4.png");
+}
+.five {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_5.png");
+}
+.six {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_6.png");
+}
+.seven {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_7.png");
+}
+.eight {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_8.png");
+}
+.hidden {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_unexplored.png");
+}
+.flagged {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_flag.png");
+}
+.mine-unhit {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_mine.png");
+}
+.mine-hit {
+  background-image: url("./assets/Minesweeper_LAZARUS_61x61_mine_hit.png");
 }
