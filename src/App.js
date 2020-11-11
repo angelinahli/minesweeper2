@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import './App.css';
 
 const NUM_MINES_SETTINGS = {
   easy: 20,
